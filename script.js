@@ -22,18 +22,16 @@ function addBookToLibrary(book) {
 
 // goes through all books in the library and displays them on the webpage
 function displayAllBooks() {
-    function read(book) {
-        if (book.read) {
-            return "read";
-        }
-        else {
-            return "not read"
-        }
-    }
+
+    let children = document.querySelectorAll('.book')
+    children.forEach(function(book) {
+        books.removeChild(book);
+    });
 
     myLibrary.forEach(function(book) {
         let bookElement = document.createElement('div');
-        bookElement.textContent = `${book.title} by ${book.author}, ${book.pages} pages, ${read(book)}`;
+        bookElement.className = 'book';
+        bookElement.textContent = `${book.title} by ${book.author}, ${book.pages} pages, ${book.read}`;
         books.appendChild(bookElement);
     });
 }
@@ -43,15 +41,28 @@ newBook.onclick = () => {
     dialog.show()
 };
 
+// resets all values and unchecks radio button on form
+function resetForm() {
+    const form = document.querySelector('form');
+    form.reset();
+    const radios = form.querySelectorAll('input[type="radio"]');
+    radios.forEach(function(radio) {
+        radio.checked = false;
+    });
+}
+
 // takes form results, create a new book, and add it to the library
 function submitForm(event) {
-    const title = ;
-    const author = ;
-    const pages = ;
-    const read = ;
+    event.preventDefault();
+    const title = document.getElementById("title").value;
+    const author = document.getElementById("author").value;
+    const pages = document.getElementById("pages").value;
+    const read = document.querySelector('input[name="read?"]:checked').value;
     const newBook = new Book(title, author, pages, read);
     addBookToLibrary(newBook);
-    event.preventDefault();
+    resetForm();
+    dialog.close();
+    displayAllBooks();
 }
 
 formSubmit.addEventListener("click", submitForm);
