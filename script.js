@@ -13,6 +13,21 @@ function Book(title, author, pages, read) {
     this.author = author;
     this.pages = pages;
     this.read = read;
+    this.deleted = false;
+}
+
+Book.prototype.changeReadStatus = function() {
+    if (this.read === "read") {
+        this.read = "not read";
+    }
+    else {
+        this.read = "read";
+    }
+}
+
+// "deletes" the book without changing the array
+Book.prototype.delete = function() {
+    this.deleted = true;
 }
 
 // adds a book object to the library
@@ -21,8 +36,15 @@ function addBookToLibrary(book) {
 }
 
 function removeBook(event) {
-    let index = event.target.parentNode.id;
-    myLibrary.splice(index, 1);
+    let index = event.target.parentNode.parentNode.id;
+    myLibrary[index].delete();
+    displayAllBooks();
+}
+
+function changeReadStatus(event) {
+    let index = event.target.parentNode.parentNode.id;
+    let book = myLibrary[index];
+    book.changeReadStatus();
     displayAllBooks();
 }
 
@@ -35,20 +57,31 @@ function displayAllBooks() {
     }
 
     myLibrary.forEach(function(book, index) {
-        let bookElement = document.createElement('div');
-        bookElement.className = 'book';
-        bookElement.id = `${index}`;
+        if (!book.deleted) {
+            let bookElement = document.createElement('div');
+            bookElement.className = 'book';
+            bookElement.id = `${index}`;
 
-        let bookText = document.createElement('div');
-        bookText.textContent = `${book.title} by ${book.author}, ${book.pages} pages, ${book.read}`;
-        bookElement.appendChild(bookText);
+            let bookText = document.createElement('div');
+            bookText.textContent = `${book.title} by ${book.author}, ${book.pages} pages, ${book.read}`;
+            bookElement.appendChild(bookText);
 
-        let bookButton = document.createElement('button');
-        bookButton.textContent = 'Remove';
-        bookButton.addEventListener("click", removeBook);
-        bookElement.appendChild(bookButton);
+            let buttons = document.createElement('div');
 
-        books.appendChild(bookElement);
+            let removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.addEventListener("click", removeBook);
+            buttons.appendChild(removeButton);
+
+            let readButton = document.createElement('button');
+            readButton.textContent = 'Read/unread';
+            readButton.addEventListener("click", changeReadStatus);
+            buttons.appendChild(readButton);
+
+            bookElement.appendChild(buttons);
+
+            books.appendChild(bookElement);
+        }
     });
 }
 
