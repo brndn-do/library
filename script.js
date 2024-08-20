@@ -20,25 +20,41 @@ function addBookToLibrary(book) {
     myLibrary.push(book);
 }
 
+function removeBook(event) {
+    let index = event.target.parentNode.id;
+    myLibrary.splice(index, 1);
+    displayAllBooks();
+}
+
 // goes through all books in the library and displays them on the webpage
 function displayAllBooks() {
 
-    let children = document.querySelectorAll('.book')
-    children.forEach(function(book) {
-        books.removeChild(book);
-    });
+    // removes all books currently on screen
+    while (books.firstChild) {
+        books.removeChild(books.firstChild);
+    }
 
-    myLibrary.forEach(function(book) {
+    myLibrary.forEach(function(book, index) {
         let bookElement = document.createElement('div');
         bookElement.className = 'book';
-        bookElement.textContent = `${book.title} by ${book.author}, ${book.pages} pages, ${book.read}`;
+        bookElement.id = `${index}`;
+
+        let bookText = document.createElement('div');
+        bookText.textContent = `${book.title} by ${book.author}, ${book.pages} pages, ${book.read}`;
+        bookElement.appendChild(bookText);
+
+        let bookButton = document.createElement('button');
+        bookButton.textContent = 'Remove';
+        bookButton.addEventListener("click", removeBook);
+        bookElement.appendChild(bookButton);
+
         books.appendChild(bookElement);
     });
 }
 
 // shows the form on click
 newBook.onclick = () => {
-    dialog.show()
+    dialog.showModal()
 };
 
 // resets all values and unchecks radio button on form
