@@ -8,26 +8,39 @@ const formSubmit = document.querySelector('.formSubmit');
 
 const myLibrary = [];
 
-function Book(title, author, pages, read) {
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.read = read;
-    this.deleted = false;
-}
+class Book {
+    #title;
+    #author;
+    #pages;
+    #read;
+    #deleted;
 
-Book.prototype.changeReadStatus = function() {
-    if (this.read === "read") {
-        this.read = "not read";
+    constructor(title, author, pages, read) {
+        this.#title = title;
+        this.#author = author;
+        this.#pages = pages;
+        this.#read = read;
+        this.#deleted = false;
     }
-    else {
-        this.read = "read";
-    }
-}
 
-// "deletes" the book without changing the array
-Book.prototype.delete = function() {
-    this.deleted = true;
+    get title() {return this.#title;}
+    get author() {return this.#author;}
+    get pages() {return this.#pages;}
+    get read() {return this.#read;}
+    get deleted() {return this.#deleted;}
+
+    changeReadStatus() {
+        if (this.#read === "read") {
+            this.#read = "not read";
+        }
+        else {
+            this.#read = "read";
+        }
+    }
+
+    delete() {
+        this.#deleted = true;
+    }
 }
 
 // adds a book object to the library
@@ -106,8 +119,14 @@ function submitForm(event) {
     const title = document.getElementById("title").value;
     const author = document.getElementById("author").value;
     const pages = document.getElementById("pages").value;
-    const read = document.querySelector('input[name="read?"]:checked').value;
-    const newBook = new Book(title, author, pages, read);
+    const readInput = document.querySelector('input[name="read?"]:checked');
+
+    if (!title || !author || !pages || !readInput) {
+        alert("Please fill out all fields.");
+        return;
+    }
+
+    const newBook = new Book(title, author, pages, readInput.value);
     addBookToLibrary(newBook);
     resetForm();
     dialog.close();
